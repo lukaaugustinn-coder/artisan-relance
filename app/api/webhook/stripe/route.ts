@@ -49,9 +49,12 @@ export async function POST(req: Request) {
     let currentPeriodEnd: number | null = null;
 
     if (subscriptionId) {
-      const sub = await stripe.subscriptions.retrieve(subscriptionId);
-      status = sub.status;
-      currentPeriodEnd = sub.current_period_end;
+   const subRes = await stripe.subscriptions.retrieve(subscriptionId);
+   const sub = ("data" in subRes ? subRes.data : subRes) as Stripe.Subscription;
+
+   status = sub.status;
+   currentPeriodEnd = sub.current_period_end;
+
     }
 
     const isPro = status === "active" || status === "trialing";
